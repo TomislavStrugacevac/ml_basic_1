@@ -1,4 +1,8 @@
+import os
+# remove info and warning messages to remove GPU spam
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
+
 # Load and prepare the MNIST dataset. Convert the samples from integers to floating-point numbers:
 mnist = tf.keras.datasets.mnist
 
