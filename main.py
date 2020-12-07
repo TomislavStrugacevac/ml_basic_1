@@ -1,6 +1,7 @@
 import os
 # remove info and warning messages to remove GPU spam
 # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1'
+import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
@@ -29,9 +30,9 @@ train_images = train_images / 255.0
 test_images = test_images / 255.0
 
 # to check we'll display 25 first preprocessed images
-plt.figure(figsize=(10,10))
+plt.figure(figsize=(10, 10))
 for i in range(25):
-    plt.subplot(5,5,i+1)
+    plt.subplot(5, 5, i + 1)
     plt.xticks([])
     plt.yticks([])
     plt.grid(False)
@@ -52,10 +53,21 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 
 # train the model on train data
-model.fit(train_images, train_labels, epochs=30)
+model.fit(train_images, train_labels, epochs=10)
 
 # compare how trained model performs vs test dataset
-test_loss, test_acc = model.evaluate(test_images,  test_labels, verbose=2)
+test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
 
 print('\nTest accuracy:', test_acc)
 
+# attaching the softmax layer to covert the logits to probabilities,
+# Softmax will predict probability for each logit and to what possible class it could belong to
+probability_model = tf.keras.Sequential([model,
+                                         tf.keras.layers.Softmax()])
+# try to predict on test images
+predictions = probability_model.predict(test_images)
+
+# As there are 10 possible clothes classes prediction[0] will show possibility of logit belonging to each - array of 10 elements
+print(predictions[0])
+print('The image in the prediction is probably clothing type of: ' +
+      class_names[np.argmax(predictions[0])])
